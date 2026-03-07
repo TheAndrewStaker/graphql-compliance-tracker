@@ -1,0 +1,23 @@
+query GetControls {
+  controls {
+    id
+    title
+    description
+    category
+    status
+  }
+}
+
+query GetTasksByControl($controlId: ID!) {
+  tasksByControl(controlId: $controlId) {
+    id
+    notes
+    completed
+    dueDate
+    owner {
+      id
+      name
+      email
+    }
+  }
+}

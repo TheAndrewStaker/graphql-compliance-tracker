@@ -1,0 +1,23 @@
+mutation UpdateControlStatus($input: UpdateControlStatusInput!) {
+  updateControlStatus(input: $input) {
+    id
+    status
+  }
+}
+
+mutation CreateControl($input: CreateControlInput!) {
+  createControl(input: $input) {
+    id
+    title
+    description
+    category
+    status
+  }
+}
+
+mutation CompleteTask($id: ID!) {
+  completeTask(id: $id) {
+    id
+    completed
+  }
+}

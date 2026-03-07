@@ -132,27 +132,31 @@ type Mutation {
 - [x] Custom `DateTime` scalar
 
 ### Hours 4–5 — Frontend
-- [ ] Apollo Client setup with `InMemoryCache`
-- [ ] Controls dashboard — list view with status badges (PASSING/FAILING/UNKNOWN)
-- [ ] Task detail drawer — opens on control click, lists tasks with owner info
-- [ ] `useQuery` for data fetching, `useMutation` for state changes
-- [ ] styled-components for all UI, clean and minimal
+- [x] Apollo Client setup with `InMemoryCache`
+- [x] GraphQL Code Generator — types and typed hooks generated from `schema.graphql` (no manual type duplication)
+- [x] Controls dashboard — MUI DataGrid with status Chip badges (PASSING/FAILING/UNKNOWN)
+- [x] Task detail drawer — MUI Drawer, opens on row click, lists tasks with owner info
+- [x] `useQuery` / `useMutation` via generated typed hooks
+- [x] MUI + Emotion for all UI (styled-components removed as redundant alongside MUI)
 
 ### Hour 6 — Polish
-- [ ] Optimistic UI update on `completeTask` mutation (instant checkbox feedback)
-- [ ] Filter controls by status on the dashboard
+- [x] Optimistic UI update on `completeTask` mutation (instant checkbox feedback)
+- [x] Filter controls by status using MUI ToggleButtonGroup
 - [ ] Responsive layout (usable on smaller screens)
 
 ### Hour 7 — Tests
-- [ ] Jest: `updateControlStatus` resolver returns correct shape
-- [ ] Jest: `tasksByControl` resolver filters correctly by controlId
-- [ ] Jest: `createTask` resolver handles missing owner gracefully
-- [ ] React Testing Library: Controls list renders mocked query data correctly
+- [x] Jest: `updateControlStatus` resolver returns correct shape
+- [x] Jest: `tasksByControl` resolver filters correctly by controlId
+- [x] Jest: `createTask` resolver handles missing owner gracefully
+- [x] React Testing Library: `StatusBadge` renders correct MUI Chip colour per status
+- [x] React Testing Library: `TaskDrawer` renders task list with owner and due date
+
+Note: DataGrid integration is not tested in jsdom — real-browser tests against the running server are deferred to Playwright (see Future Enhancements).
 
 ### Hour 8 — README + GitHub Cleanup
 - [ ] README with screenshot, setup instructions, and architecture notes
 - [ ] Clean commit history (one commit per major milestone)
-- [ ] `.env.example` with required environment variables documented
+- [ ] `.env.local.dist` files document required environment variables
 - [ ] Remove all console.logs and debug artifacts
 
 ---
@@ -171,13 +175,47 @@ These are the four patterns that demonstrate GraphQL fluency beyond basic CRUD. 
 ## Environment Variables
 
 ```
-# server/.env
+# server/.env.local  (copy from .env.local.dist)
 MONGODB_URI=mongodb://localhost:27017/compliance-tracker
 PORT=4000
 
-# client/.env
-REACT_APP_GRAPHQL_URI=http://localhost:4000/graphql
+# client/.env.local  (copy from .env.local.dist)
+VITE_GRAPHQL_URI=http://localhost:4000/graphql
 ```
+
+---
+
+## Future Enhancements
+
+### Testing
+- **Playwright** — e2e tests against the real running stack (server + MongoDB + client). Covers DataGrid rendering, row click → drawer open, completeTask checkbox flow. Replaces the need for DataGrid-specific jsdom mocking.
+
+### Frontend
+- **Paginated DataGrid** — switch `controls` query to a paginated resolver (`controlsPaginated(page, pageSize)`) and use DataGrid server-side pagination mode. Required once control counts grow beyond a few hundred rows.
+
+### Project Structure
+- **Feature-based layout** — reorganise both `client/src/` and `server/src/` from type-based folders (`components/`, `resolvers/`, `models/`) into feature folders (`controls/`, `tasks/`, `owners/`), each containing its own components, resolvers, models, graphql files, and tests. Scales significantly better as the number of domains grows — avoids large flat directories where unrelated files sit next to each other.
+
+  ```
+  client/src/features/controls/
+    ControlsDashboard.tsx
+    StatusBadge.tsx
+    queries.graphql
+  client/src/features/tasks/
+    TaskDrawer.tsx
+    queries.graphql
+
+  server/src/features/controls/
+    control.model.ts
+    control.resolver.ts
+    control.test.ts
+  server/src/features/tasks/
+    task.model.ts
+    task.resolver.ts
+  ```
+
+### Infrastructure
+- **npm workspaces + shared codegen package** — when a second client exists (mobile, public API, SSR), extract `schema.graphql` and the codegen config into a `packages/shared` workspace package. Both clients import generated types from there instead of maintaining separate codegen configs pointed at `../server`. Not worth the overhead for a single client.
 
 ---
 
