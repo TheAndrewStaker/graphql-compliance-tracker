@@ -154,10 +154,9 @@ type Mutation {
 Note: DataGrid integration is not tested in jsdom — real-browser tests against the running server are deferred to Playwright (see Future Enhancements).
 
 ### Hour 8 — README + GitHub Cleanup
-- [ ] README with screenshot, setup instructions, and architecture notes
-- [ ] Clean commit history (one commit per major milestone)
-- [ ] `.env.local.dist` files document required environment variables
-- [ ] Remove all console.logs and debug artifacts
+- [x] README with screenshot, setup instructions, and architecture notes
+- [x] `.env.local.dist` files document required environment variables
+- [x] Remove all console.logs and debug artifacts (none found — codebase was clean; intentional DEV-only console.warn in apollo/client.ts retained)
 
 ---
 
