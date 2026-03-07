@@ -1,0 +1,69 @@
+scalar DateTime
+
+enum ControlStatus {
+  PASSING
+  FAILING
+  UNKNOWN
+}
+
+type Owner {
+  id: ID!
+  name: String!
+  email: String!
+}
+
+type Control {
+  id: ID!
+  title: String!
+  description: String
+  category: String!
+  status: ControlStatus!
+}
+
+type Task {
+  id: ID!
+  control: Control!
+  owner: Owner!
+  dueDate: DateTime!
+  notes: String
+  completed: Boolean!
+}
+
+input CreateControlInput {
+  title: String!
+  description: String
+  category: String!
+}
+
+input UpdateControlStatusInput {
+  id: ID!
+  status: ControlStatus!
+}
+
+input CreateOwnerInput {
+  name: String!
+  email: String!
+}
+
+input CreateTaskInput {
+  controlId: ID!
+  ownerId: ID!
+  dueDate: DateTime!
+  notes: String
+}
+
+type Query {
+  controls: [Control!]!
+  control(id: ID!): Control
+  tasks: [Task!]!
+  tasksByControl(controlId: ID!): [Task!]!
+  owners: [Owner!]!
+}
+
+type Mutation {
+  createOwner(input: CreateOwnerInput!): Owner!
+  createControl(input: CreateControlInput!): Control!
+  updateControlStatus(input: UpdateControlStatusInput!): Control!
+  createTask(input: CreateTaskInput!): Task!
+  completeTask(id: ID!): Task!
+}
