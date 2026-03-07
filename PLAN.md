@@ -192,6 +192,20 @@ VITE_GRAPHQL_URI=http://localhost:4000/graphql
 ### Frontend
 - **Paginated DataGrid** — switch `controls` query to a paginated resolver (`controlsPaginated(page, pageSize)`) and use DataGrid server-side pagination mode. Required once control counts grow beyond a few hundred rows.
 
+- **Management views (full CRUD UI)** — dedicated pages for each entity with create, edit, and delete actions, backed by the existing mutations. Requires adding React Router for navigation between views.
+
+  | Page | Operations |
+  |---|---|
+  | Controls | List (existing dashboard) + Create + Edit status/description + Delete |
+  | Tasks | List all or by control + Create (assign owner, control, due date) + Edit notes/due date + Delete |
+  | Owners | List + Create + Edit name/email + Delete |
+
+  Each form would use a MUI Dialog or dedicated route, with Apollo mutations wired to the generated typed hooks. Delete actions need confirmation dialogs and cache eviction (`cache.evict`) to keep the UI consistent without a full refetch.
+
+  **Form requirements:**
+  - Client-side validation before mutation fires — required fields, email format for Owner, date sanity checks for Task. MUI's `error` + `helperText` props on each field; no external form library needed at this scale.
+  - Keyboard-first UX: dialogs open with focus on the first field, Tab moves through fields in logical order, Enter submits (or moves to next field where appropriate), Escape closes. MUI Dialog handles focus trapping and Escape out of the box — the main addition is wiring `onKeyDown` on the form to submit on Enter and ensuring no `autoFocus` conflicts.
+
 ### Project Structure
 - **Feature-based layout** — reorganise both `client/src/` and `server/src/` from type-based folders (`components/`, `resolvers/`, `models/`) into feature folders (`controls/`, `tasks/`, `owners/`), each containing its own components, resolvers, models, graphql files, and tests. Scales significantly better as the number of domains grows — avoids large flat directories where unrelated files sit next to each other.
 
