@@ -9,6 +9,7 @@ const config: Config = {
     '^.+\\.tsx?$': ['ts-jest', { tsconfig: { jsx: 'react-jsx' } }],
   },
   moduleNameMapper: {
+    '^@/(.*)$': '<rootDir>/src/$1',
     '\\.(css|svg)$': '<rootDir>/src/__mocks__/fileMock.js',
   },
 };

@@ -1,12 +1,13 @@
 import { useState } from 'react';
-import { Box, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material';
+import { ToggleButton, ToggleButtonGroup, Typography, useMediaQuery, useTheme } from '@mui/material';
 import { DataGrid, type GridColDef } from '@mui/x-data-grid';
-import StatusBadge from './StatusBadge';
-import TaskDrawer from './TaskDrawer';
+import StatusBadge from '@/components/StatusBadge';
+import TaskDrawer from '@/components/TaskDrawer';
+import PageContainer from '@/components/PageContainer';
 import {
   useGetControlsQuery,
   type ControlStatus,
-} from '../graphql/__generated__/types';
+} from '@/graphql/__generated__/types';
 
 type StatusFilter = ControlStatus | 'ALL';
 
@@ -25,6 +26,9 @@ export default function ControlsDashboard() {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('ALL');
   const [selectedControlId, setSelectedControlId] = useState<string>();
 
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
   const { data, loading } = useGetControlsQuery();
 
   const rows = (data?.controls ?? []).filter(
@@ -32,7 +36,7 @@ export default function ControlsDashboard() {
   );
 
   return (
-    <Box sx={{ p: 3 }}>
+    <PageContainer>
       <Typography variant="h5" gutterBottom>
         Compliance Controls
       </Typography>
@@ -42,7 +46,7 @@ export default function ControlsDashboard() {
         exclusive
         onChange={(_, val) => val && setStatusFilter(val)}
         size="small"
-        sx={{ mb: 2 }}
+        sx={{ mb: 2, flexWrap: 'wrap' }}
       >
         <ToggleButton value="ALL">All</ToggleButton>
         <ToggleButton value="PASSING">Passing</ToggleButton>
@@ -54,17 +58,17 @@ export default function ControlsDashboard() {
         rows={rows}
         columns={columns}
         loading={loading}
-        autoHeight
         pageSizeOptions={[10, 25]}
         initialState={{ pagination: { paginationModel: { pageSize: 10 } } }}
         onRowClick={({ id }) => setSelectedControlId(String(id))}
-        sx={{ cursor: 'pointer' }}
+        columnVisibilityModel={{ category: !isMobile }}
+        sx={{ height: 'auto', cursor: 'pointer' }}
       />
 
       <TaskDrawer
         controlId={selectedControlId}
         onClose={() => setSelectedControlId(undefined)}
       />
-    </Box>
+    </PageContainer>
   );
 }

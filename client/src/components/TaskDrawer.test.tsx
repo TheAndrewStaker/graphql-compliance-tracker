@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { MockedProvider } from '@apollo/client/testing';
-import TaskDrawer from './TaskDrawer';
-import { GetTasksByControlDocument } from '../graphql/__generated__/types';
+import TaskDrawer from '@/components/TaskDrawer';
+import { GetTasksByControlDocument } from '@/graphql/__generated__/types';
 
 // Midday UTC avoids date shifting across timezone boundaries
 const DUE_DATE = '2026-04-15T12:00:00.000Z';

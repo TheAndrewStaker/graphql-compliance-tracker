@@ -142,7 +142,7 @@ type Mutation {
 ### Hour 6 — Polish
 - [x] Optimistic UI update on `completeTask` mutation (instant checkbox feedback)
 - [x] Filter controls by status using MUI ToggleButtonGroup
-- [ ] Responsive layout (usable on smaller screens)
+- [x] Responsive layout (usable on smaller screens)
 
 ### Hour 7 — Tests
 - [x] Jest: `updateControlStatus` resolver returns correct shape

@@ -1,7 +1,7 @@
 import { ApolloProvider } from '@apollo/client';
 import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
-import { client } from './apollo/client';
-import ControlsDashboard from './components/ControlsDashboard';
+import { client } from '@/apollo/client';
+import ControlsDashboard from '@/components/ControlsDashboard';
 
 const theme = createTheme();
 
