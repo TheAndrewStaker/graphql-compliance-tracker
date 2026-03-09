@@ -192,6 +192,8 @@ VITE_GRAPHQL_URI=http://localhost:4000/graphql
 ### Frontend
 - **Paginated DataGrid** — switch `controls` query to a paginated resolver (`controlsPaginated(page, pageSize)`) and use DataGrid server-side pagination mode. Required once control counts grow beyond a few hundred rows.
 
+- **Server package upgrades** — update to latest major versions before adding new features: `@apollo/server` 4→5, `express` 4→5, `mongoose` 8→9, `dotenv` 16→17, `@types/node`/`@types/express` to match. Each has a migration guide; do them as a single focused session before touching application code.
+
 - **Management views (full CRUD UI)** — dedicated pages for each entity with create, edit, and delete actions, backed by the existing mutations. Requires adding React Router for navigation between views.
 
   | Page | Operations |

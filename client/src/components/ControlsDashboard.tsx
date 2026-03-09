@@ -4,10 +4,12 @@ import { DataGrid, type GridColDef } from '@mui/x-data-grid';
 import StatusBadge from '@/components/StatusBadge';
 import TaskDrawer from '@/components/TaskDrawer';
 import PageContainer from '@/components/PageContainer';
+import { useQuery } from '@apollo/client/react';
 import {
-  useGetControlsQuery,
+  GetControlsDocument,
+  type Control,
   type ControlStatus,
-} from '@/graphql/__generated__/types';
+} from '@/graphql/__generated__/graphql';
 
 type StatusFilter = ControlStatus | 'ALL';
 
@@ -29,10 +31,10 @@ export default function ControlsDashboard() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-  const { data, loading } = useGetControlsQuery();
+  const { data, loading } = useQuery(GetControlsDocument);
 
   const rows = (data?.controls ?? []).filter(
-    (c) => statusFilter === 'ALL' || c.status === statusFilter
+    (c: Control) => statusFilter === 'ALL' || c.status === statusFilter
   );
 
   return (

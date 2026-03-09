@@ -9,10 +9,11 @@ import {
   Typography,
 } from '@mui/material';
 import DrawerPanel from '@/components/DrawerPanel';
+import { useQuery, useMutation } from '@apollo/client/react';
 import {
-  useGetTasksByControlQuery,
-  useCompleteTaskMutation,
-} from '@/graphql/__generated__/types';
+  GetTasksByControlDocument,
+  CompleteTaskDocument,
+} from '@/graphql/__generated__/graphql';
 
 interface Props {
   controlId?: string;
@@ -20,12 +21,12 @@ interface Props {
 }
 
 export default function TaskDrawer({ controlId, onClose }: Props) {
-  const { data, loading } = useGetTasksByControlQuery({
+  const { data, loading } = useQuery(GetTasksByControlDocument, {
     variables: { controlId: controlId ?? '' },
     skip: !controlId,
   });
 
-  const [completeTask] = useCompleteTaskMutation();
+  const [completeTask] = useMutation(CompleteTaskDocument);
 
   const tasks = data?.tasksByControl ?? [];
 

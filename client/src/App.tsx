@@ -1,4 +1,4 @@
-import { ApolloProvider } from '@apollo/client';
+import { ApolloProvider } from '@apollo/client/react';
 import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
 import { client } from '@/apollo/client';
 import ControlsDashboard from '@/components/ControlsDashboard';

@@ -1,5 +1,5 @@
 import { Chip } from '@mui/material';
-import type { ControlStatus } from '../graphql/__generated__/types';
+import type { ControlStatus } from '@/graphql/__generated__/graphql';
 
 const colorMap: Record<ControlStatus, 'success' | 'error' | 'default'> = {
   PASSING: 'success',
