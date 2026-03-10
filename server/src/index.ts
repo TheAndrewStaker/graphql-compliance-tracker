@@ -3,7 +3,7 @@ dotenv.config({ path: '.env.local' });
 import express from 'express';
 import cors from 'cors';
 import { ApolloServer } from '@apollo/server';
-import { expressMiddleware } from '@apollo/server/express4';
+import { expressMiddleware } from '@as-integrations/express5';
 import { typeDefs } from './schema/typeDefs';
 import { resolvers, AppContext } from './resolvers';
 import { connectDB } from './db';
