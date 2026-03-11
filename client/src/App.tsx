@@ -3,7 +3,11 @@ import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
 import { client } from '@/apollo/client';
 import ControlsDashboard from '@/components/ControlsDashboard';
 
-const theme = createTheme();
+const theme = createTheme({
+  typography: {
+    fontFamily: '"Figtree", sans-serif',
+  },
+});
 
 export default function App() {
   return (

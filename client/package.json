@@ -9,7 +9,9 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "codegen": "graphql-codegen --config codegen.ts",
-    "test": "jest --runInBand"
+    "validate:codegen": "graphql-codegen --config codegen.ts --check",
+    "test": "jest --runInBand",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@apollo/client": "^4.1.6",

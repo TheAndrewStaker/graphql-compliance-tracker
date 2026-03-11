@@ -1,0 +1,24 @@
+{
+  "name": "graphql-compliance-tracker",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TheAndrewStaker/graphql-compliance-tracker.git"
+  },
+  "scripts": {
+    "validate:features": "node scripts/validate-features.js",
+    "validate:codegen": "npm --prefix client run validate:codegen",
+    "typecheck": "npm --prefix client run typecheck && npm --prefix server run typecheck",
+    "test": "npm --prefix client run test && npm --prefix server run test",
+    "test:all": "npm run validate:features && npm run validate:codegen && npm run typecheck && npm run test",
+    "project:init": "node scripts/project.mjs init",
+    "sprint:new": "node scripts/project.mjs sprint:new",
+    "sprint:close": "node scripts/project.mjs sprint:close",
+    "session:new": "node scripts/project.mjs session:new",
+    "session:close": "node scripts/project.mjs session:close",
+    "spec:new": "node scripts/project.mjs spec:new"
+  },
+  "devDependencies": {
+    "@cucumber/gherkin": "^39.0.0"
+  }
+}

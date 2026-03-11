@@ -1,0 +1,5 @@
+schema: server/src/schema/schema.graphql
+documents: client/src/graphql/**/*.graphql
+exclude:
+  - docs/**
+  - "**/*.md"
