@@ -56,7 +56,7 @@ MongoDB 7 (Docker, port 27017)
 
 **Routing:** React Router v6 — `BrowserRouter` in `main.tsx`, routes defined in `App.tsx`
 
-**Components:** `src/components/` — one component per file, PascalCase. Shared layout components (`PageContainer`, `DrawerPanel`) live here alongside feature components.
+**Components:** `src/components/` — one component per file, PascalCase. Shared layout components (`PageContainer`, `DrawerPanel`, `FormDialog`, `DeleteConfirmDialog`) live here alongside feature components.
 
 **GraphQL operations:** `src/graphql/` — `.graphql` files for all queries and mutations. Never inlined as `gql` strings in components.
 
@@ -93,3 +93,7 @@ Relationships are Mongoose `ObjectId` references. The GraphQL schema resolves `T
 | `@as-integrations/express5` | Apollo Server 5 removed built-in Express middleware; integrations are now independently versioned packages so Apollo and Express upgrade cycles are decoupled |
 | MUI + Emotion (no styled-components) | MUI ships Emotion as its styling engine; adding styled-components alongside would be redundant |
 | `dotenv` loads `.env.local` explicitly | Avoids accidental `.env` loading; `.env.local` is gitignored and populated from `.env.local.dist` via `npm run setup` |
+| Fragment masking (`client-preset` default) | Two fragments per model: `<Model>ListFields` for DataGrid columns, `<Model>EditFields` for dialogs. Queries spread both. `useFragment as readFragment` aliased for page-level callbacks. |
+| `cache.modify` for list cache updates | With fragment-masked queries, `readQuery/writeQuery` does not round-trip correctly through fragment boundaries. `cache.modify` operates at the reference level and bypasses this. All create/delete mutations use `cache.modify` with `toReference`. |
+| `FormDialog` shared component | Wraps `Dialog > Box[component=form, noValidate]` with `DialogTitle`, `DialogContent`, and `DialogActions`. All CRUD dialogs compose it. `noValidate` disables browser-native constraint validation so React helperText errors render instead of browser popups. |
+| Cascade delete in resolvers (not Mongoose middleware) | Explicit `deleteMany` calls before the parent delete keep the cascade visible at a single call site, make it easy to test with mocks, and avoid hidden side-effects from schema-level hooks. |

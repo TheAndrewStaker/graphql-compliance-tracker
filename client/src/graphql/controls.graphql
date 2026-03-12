@@ -1,0 +1,53 @@
+fragment ControlListFields on Control {
+  id
+  title
+  description
+  category
+  status
+}
+
+fragment ControlEditFields on Control {
+  id
+  title
+  description
+  category
+  status
+}
+
+query GetControls {
+  controls {
+    ...ControlListFields
+    ...ControlEditFields
+  }
+}
+
+mutation CreateControl($input: CreateControlInput!) {
+  createControl(input: $input) {
+    id
+    title
+    description
+    category
+    status
+  }
+}
+
+mutation UpdateControl($input: UpdateControlInput!) {
+  updateControl(input: $input) {
+    id
+    title
+    description
+    category
+    status
+  }
+}
+
+mutation UpdateControlStatus($input: UpdateControlStatusInput!) {
+  updateControlStatus(input: $input) {
+    id
+    status
+  }
+}
+
+mutation DeleteControl($id: ID!) {
+  deleteControl(id: $id)
+}

@@ -1,0 +1,38 @@
+fragment OwnerListFields on Owner {
+  id
+  name
+  email
+}
+
+fragment OwnerEditFields on Owner {
+  id
+  name
+  email
+}
+
+query GetOwners {
+  owners {
+    ...OwnerListFields
+    ...OwnerEditFields
+  }
+}
+
+mutation CreateOwner($input: CreateOwnerInput!) {
+  createOwner(input: $input) {
+    id
+    name
+    email
+  }
+}
+
+mutation UpdateOwner($input: UpdateOwnerInput!) {
+  updateOwner(input: $input) {
+    id
+    name
+    email
+  }
+}
+
+mutation DeleteOwner($id: ID!) {
+  deleteOwner(id: $id)
+}

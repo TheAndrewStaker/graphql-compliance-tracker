@@ -31,7 +31,7 @@ export default function TaskDrawer({ controlId, onClose }: Props) {
   const tasks = data?.tasksByControl ?? [];
 
   function handleComplete(id: string) {
-    completeTask({
+    void completeTask({
       variables: { id },
       optimisticResponse: {
         completeTask: { __typename: 'Task', id, completed: true },
@@ -62,7 +62,7 @@ export default function TaskDrawer({ controlId, onClose }: Props) {
               }
             >
               <ListItemText
-                primary={task.notes ?? '(no notes)'}
+                primary={task.description}
                 secondary={`${task.owner.name} · Due ${new Date(task.dueDate).toLocaleDateString()}`}
               />
             </ListItem>

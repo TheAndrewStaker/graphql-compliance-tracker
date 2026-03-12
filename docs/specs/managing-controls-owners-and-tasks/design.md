@@ -167,8 +167,9 @@ client/src/
     TaskDialog.tsx
     DeleteConfirmDialog.tsx
   graphql/
-    queries.graphql           (updated)
-    mutations.graphql         (updated)
+    controls.graphql          (updated)
+    owners.graphql            (new)
+    tasks.graphql             (updated)
 
 server/src/
   schema/schema.graphql       (updated)

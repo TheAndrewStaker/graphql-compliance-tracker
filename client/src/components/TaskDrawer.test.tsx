@@ -19,7 +19,8 @@ const mocks = [
           {
             __typename: 'Task',
             id: 't1',
-            notes: 'Review access logs',
+            description: 'Review access logs',
+            notes: null,
             completed: false,
             dueDate: DUE_DATE,
             owner: {
@@ -36,10 +37,10 @@ const mocks = [
 ];
 
 describe('TaskDrawer', () => {
-  it('renders task notes and owner name after query resolves', async () => {
+  it('renders task description and owner name after query resolves', async () => {
     render(
       <MockedProvider mocks={mocks}>
-        <TaskDrawer controlId="ctrl1" onClose={() => {}} />
+        <TaskDrawer controlId="ctrl1" onClose={jest.fn()} />
       </MockedProvider>
     );
 
@@ -50,7 +51,7 @@ describe('TaskDrawer', () => {
   it('renders due date for each task', async () => {
     render(
       <MockedProvider mocks={mocks}>
-        <TaskDrawer controlId="ctrl1" onClose={() => {}} />
+        <TaskDrawer controlId="ctrl1" onClose={jest.fn()} />
       </MockedProvider>
     );
 
@@ -60,7 +61,7 @@ describe('TaskDrawer', () => {
   it('does not render the drawer when controlId is not provided', () => {
     render(
       <MockedProvider mocks={[]}>
-        <TaskDrawer onClose={() => {}} />
+        <TaskDrawer onClose={jest.fn()} />
       </MockedProvider>
     );
 

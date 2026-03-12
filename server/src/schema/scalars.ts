@@ -4,7 +4,7 @@ export const DateTimeScalar = new GraphQLScalarType({
   name: 'DateTime',
   description: 'ISO-8601 date-time string',
   serialize(value: unknown): string {
-    if (value instanceof Date) return value.toISOString();
+    if (value instanceof Date) {return value.toISOString();}
     if (typeof value === 'string' || typeof value === 'number') {
       return new Date(value).toISOString();
     }
@@ -17,7 +17,7 @@ export const DateTimeScalar = new GraphQLScalarType({
     throw new Error('DateTime parseValue: expected string or number');
   },
   parseLiteral(ast): Date {
-    if (ast.kind === Kind.STRING) return new Date(ast.value);
+    if (ast.kind === Kind.STRING) {return new Date(ast.value);}
     throw new Error('DateTime parseLiteral: expected StringValue');
   },
 });

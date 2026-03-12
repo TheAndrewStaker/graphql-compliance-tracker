@@ -1,14 +1,17 @@
-import { Box, styled } from '@mui/material';
+import { Stack, type StackProps } from '@mui/material';
 
 /**
- * Wraps page-level content with responsive padding.
- * Tighter on mobile (16px), roomier on sm+ (24px).
+ * Page-level layout wrapper. Applies responsive padding and consistent
+ * vertical spacing between direct children so pages don't need mb/mt props.
  */
-const PageContainer = styled(Box)(({ theme }) => ({
-  padding: theme.spacing(2),
-  [theme.breakpoints.up('sm')]: {
-    padding: theme.spacing(3),
-  },
-}));
-
-export default PageContainer;
+export default function PageContainer({ children, ...props }: StackProps) {
+  return (
+    <Stack
+      spacing={2}
+      sx={{ p: { xs: 2, sm: 3 }, ...props.sx }}
+      {...props}
+    >
+      {children}
+    </Stack>
+  );
+}

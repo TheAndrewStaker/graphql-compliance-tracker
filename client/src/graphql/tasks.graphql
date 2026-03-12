@@ -1,0 +1,95 @@
+fragment TaskListFields on Task {
+  id
+  description
+  dueDate
+  completed
+  control {
+    title
+  }
+  owner {
+    name
+  }
+}
+
+fragment TaskEditFields on Task {
+  id
+  description
+  notes
+  dueDate
+  control {
+    id
+    title
+  }
+  owner {
+    id
+    name
+  }
+}
+
+query GetTasks {
+  tasks {
+    ...TaskListFields
+    ...TaskEditFields
+  }
+}
+
+query GetTasksByControl($controlId: ID!) {
+  tasksByControl(controlId: $controlId) {
+    id
+    description
+    notes
+    completed
+    dueDate
+    owner {
+      id
+      name
+      email
+    }
+  }
+}
+
+mutation CreateTask($input: CreateTaskInput!) {
+  createTask(input: $input) {
+    id
+    description
+    notes
+    completed
+    dueDate
+    control {
+      id
+      title
+    }
+    owner {
+      id
+      name
+    }
+  }
+}
+
+mutation CompleteTask($id: ID!) {
+  completeTask(id: $id) {
+    id
+    completed
+  }
+}
+
+mutation UpdateTask($input: UpdateTaskInput!) {
+  updateTask(input: $input) {
+    id
+    description
+    notes
+    dueDate
+    control {
+      id
+      title
+    }
+    owner {
+      id
+      name
+    }
+  }
+}
+
+mutation DeleteTask($id: ID!) {
+  deleteTask(id: $id)
+}

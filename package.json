@@ -10,7 +10,9 @@
     "validate:codegen": "npm --prefix client run validate:codegen",
     "typecheck": "npm --prefix client run typecheck && npm --prefix server run typecheck",
     "test": "npm --prefix client run test && npm --prefix server run test",
-    "test:all": "npm run validate:features && npm run validate:codegen && npm run typecheck && npm run test",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "test:all": "npm run validate:features && npm run validate:codegen && npm run typecheck && npm run lint && npm run test",
     "project:init": "node scripts/project.mjs init",
     "sprint:new": "node scripts/project.mjs sprint:new",
     "sprint:close": "node scripts/project.mjs sprint:close",
@@ -19,6 +21,11 @@
     "spec:new": "node scripts/project.mjs spec:new"
   },
   "devDependencies": {
-    "@cucumber/gherkin": "^39.0.0"
+    "@cucumber/gherkin": "^39.0.0",
+    "eslint": "^9.39.4",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "jiti": "^2.6.1",
+    "typescript-eslint": "^8.57.0"
   }
 }

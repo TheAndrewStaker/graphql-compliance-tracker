@@ -25,6 +25,7 @@ type Task {
   control: Control!
   owner: Owner!
   dueDate: DateTime!
+  description: String!
   notes: String
   completed: Boolean!
 }
@@ -49,6 +50,30 @@ input CreateTaskInput {
   controlId: ID!
   ownerId: ID!
   dueDate: DateTime!
+  description: String!
+  notes: String
+}
+
+input UpdateControlInput {
+  id: ID!
+  title: String!
+  description: String
+  category: String!
+  status: ControlStatus!
+}
+
+input UpdateOwnerInput {
+  id: ID!
+  name: String!
+  email: String!
+}
+
+input UpdateTaskInput {
+  id: ID!
+  controlId: ID!
+  ownerId: ID!
+  dueDate: DateTime!
+  description: String!
   notes: String
 }
 
@@ -66,4 +91,10 @@ type Mutation {
   updateControlStatus(input: UpdateControlStatusInput!): Control!
   createTask(input: CreateTaskInput!): Task!
   completeTask(id: ID!): Task!
+  updateControl(input: UpdateControlInput!): Control!
+  deleteControl(id: ID!): ID!
+  updateOwner(input: UpdateOwnerInput!): Owner!
+  deleteOwner(id: ID!): ID!
+  updateTask(input: UpdateTaskInput!): Task!
+  deleteTask(id: ID!): ID!
 }
