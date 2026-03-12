@@ -13,8 +13,11 @@ function findFeatureFiles(dir) {
   const results = [];
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
     const full = path.join(dir, entry.name);
-    if (entry.isDirectory()) {results.push(...findFeatureFiles(full));}
-    else if (entry.name.endsWith('.feature')) {results.push(full);}
+    if (entry.isDirectory()) {
+      results.push(...findFeatureFiles(full));
+    } else if (entry.name.endsWith('.feature')) {
+      results.push(full);
+    }
   }
   return results;
 }
@@ -37,7 +40,7 @@ for (const file of files) {
       includeGherkinDocument: true,
       includePickles: false,
       newId: IdGenerator.uuid(),
-    })
+    }),
   );
   const errors = messages.filter((m) => m.parseError);
   if (errors.length > 0) {

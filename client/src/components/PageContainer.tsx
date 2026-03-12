@@ -6,11 +6,7 @@ import { Stack, type StackProps } from '@mui/material';
  */
 export default function PageContainer({ children, ...props }: StackProps) {
   return (
-    <Stack
-      spacing={2}
-      sx={{ p: { xs: 2, sm: 3 }, ...props.sx }}
-      {...props}
-    >
+    <Stack spacing={2} sx={{ p: { xs: 2, sm: 3 }, ...props.sx }} {...props}>
       {children}
     </Stack>
   );

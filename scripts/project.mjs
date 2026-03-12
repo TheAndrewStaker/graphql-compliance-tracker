@@ -29,7 +29,9 @@ function ensure(dir) {
 }
 
 function write(filePath, content, { overwrite = false } = {}) {
-  if (!overwrite && fs.existsSync(filePath)) {return false;}
+  if (!overwrite && fs.existsSync(filePath)) {
+    return false;
+  }
   fs.mkdirSync(path.dirname(filePath), { recursive: true });
   fs.writeFileSync(filePath, content, 'utf8');
   return true;
@@ -47,22 +49,22 @@ function log(msg) {
 // ─── Commands ────────────────────────────────────────────────────────────────
 
 function cmdInit() {
-  const dirs = [
-    'docs/specs',
-    'docs/testing/manual',
-    'docs/sprints',
-    'docs/sessions',
-  ];
+  const dirs = ['docs/specs', 'docs/testing/manual', 'docs/sprints', 'docs/sessions'];
 
   for (const d of dirs) {
     const full = path.join(root, d);
     const existed = fs.existsSync(full);
     ensure(full);
-    if (!existed) {log(`created  ${d}/`);}
+    if (!existed) {
+      log(`created  ${d}/`);
+    }
   }
 
   const planPath = path.join(root, 'PLAN.md');
-  if (write(planPath, `# Project Plan
+  if (
+    write(
+      planPath,
+      `# Project Plan
 
 ## Milestones
 
@@ -77,10 +79,17 @@ function cmdInit() {
 
 | Date | Decision | Rationale |
 |------|----------|-----------|
-`)) {log('created  PLAN.md');}
+`,
+    )
+  ) {
+    log('created  PLAN.md');
+  }
 
   const archPath = path.join(root, 'docs/ARCHITECTURE.md');
-  if (write(archPath, `# Architecture
+  if (
+    write(
+      archPath,
+      `# Architecture
 
 ## Overview
 
@@ -93,7 +102,11 @@ function cmdInit() {
 ## Data flow
 
 <!-- How data moves through the system. -->
-`)) {log('created  docs/ARCHITECTURE.md');}
+`,
+    )
+  ) {
+    log('created  docs/ARCHITECTURE.md');
+  }
 
   log('done. run again at any time — init is idempotent.');
 }
@@ -135,9 +148,10 @@ function cmdSprintClose() {
   }
 
   const sprintsDir = path.join(root, 'docs/sprints');
-  const existing = fs.readdirSync(sprintsDir)
-    .filter(f => /^sprint-\d+\.md$/.test(f))
-    .map(f => parseInt(f.match(/\d+/)[0], 10));
+  const existing = fs
+    .readdirSync(sprintsDir)
+    .filter((f) => /^sprint-\d+\.md$/.test(f))
+    .map((f) => parseInt(f.match(/\d+/)[0], 10));
 
   const next = existing.length > 0 ? Math.max(...existing) + 1 : 1;
   const archiveName = `sprint-${String(next).padStart(3, '0')}.md`;
@@ -189,8 +203,12 @@ function cmdSessionClose() {
 
 function cmdSpecNew() {
   const name = args[0];
-  if (!name) {fail('usage: spec:new <name>');}
-  if (!/^[a-z0-9-]+$/.test(name)) {fail('name must be lowercase letters, numbers, and hyphens only');}
+  if (!name) {
+    fail('usage: spec:new <name>');
+  }
+  if (!/^[a-z0-9-]+$/.test(name)) {
+    fail('name must be lowercase letters, numbers, and hyphens only');
+  }
 
   const specDir = path.join(root, 'docs/specs', name);
 
@@ -201,7 +219,9 @@ function cmdSpecNew() {
   ensure(specDir);
 
   const featurePath = path.join(specDir, `${name}.feature`);
-  fs.writeFileSync(featurePath, `Feature: ${name}
+  fs.writeFileSync(
+    featurePath,
+    `Feature: ${name}
   # What this feature does and what it explicitly does not do (non-goals).
 
   Rule: <invariant — something always true regardless of scenario>
@@ -210,11 +230,15 @@ function cmdSpecNew() {
     Given <precondition>
     When <action>
     Then <outcome>
-`, 'utf8');
+`,
+    'utf8',
+  );
   log(`created  ${rel(featurePath)}`);
 
   const designPath = path.join(specDir, 'design.md');
-  fs.writeFileSync(designPath, `# Design: ${name}
+  fs.writeFileSync(
+    designPath,
+    `# Design: ${name}
 
 ## Overview
 
@@ -231,18 +255,24 @@ function cmdSpecNew() {
 ## Decisions
 
 <!-- Architectural choices specific to this feature and their rationale. -->
-`, 'utf8');
+`,
+    'utf8',
+  );
   log(`created  ${rel(designPath)}`);
 
   const tasksPath = path.join(specDir, 'tasks.md');
-  fs.writeFileSync(tasksPath, `# Tasks: ${name}
+  fs.writeFileSync(
+    tasksPath,
+    `# Tasks: ${name}
 
 <!-- Ordered implementation checklist. Each task should be completable in one session. -->
 <!-- Trace each task to a scenario or rule in ${name}.feature. -->
 
 - [ ] <!-- task 1 -->
 - [ ] <!-- task 2 -->
-`, 'utf8');
+`,
+    'utf8',
+  );
   log(`created  ${rel(tasksPath)}`);
 }
 

@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import { useMutation } from '@apollo/client/react';
-import { UpdateControlDocument, ControlEditFieldsFragmentDoc } from '@/graphql/__generated__/graphql';
+import {
+  UpdateControlDocument,
+  ControlEditFieldsFragmentDoc,
+} from '@/graphql/__generated__/graphql';
 import { useFragment, type FragmentType } from '@/graphql/__generated__/fragment-masking';
 import FormDialog from '@/components/FormDialog';
 import ControlFormFields, {
@@ -31,7 +34,9 @@ export default function EditControlDialog({ open, control, onClose }: Props) {
   function handleSubmit() {
     const next = validateControlFields(values);
     setErrors(next);
-    if (Object.keys(next).length > 0) { return; }
+    if (Object.keys(next).length > 0) {
+      return;
+    }
 
     onClose();
     void updateControl({
@@ -59,7 +64,13 @@ export default function EditControlDialog({ open, control, onClose }: Props) {
 
   return (
     <FormDialog open={open} title="Edit Control" onClose={onClose} onSubmit={handleSubmit}>
-      <ControlFormFields values={values} errors={errors} showStatus autoFocus onChange={setValues} />
+      <ControlFormFields
+        values={values}
+        errors={errors}
+        showStatus
+        autoFocus
+        onChange={setValues}
+      />
     </FormDialog>
   );
 }

@@ -37,7 +37,9 @@ export default function EditTaskDialog({ open, task, onClose }: Props) {
   function handleSubmit() {
     const next = validateTaskFields(values);
     setErrors(next);
-    if (Object.keys(next).length > 0) { return; }
+    if (Object.keys(next).length > 0) {
+      return;
+    }
 
     onClose();
     void updateTask({

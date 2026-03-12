@@ -22,15 +22,22 @@ export default function FormDialog({
       <Box
         component="form"
         noValidate
-        onSubmit={e => { e.preventDefault(); onSubmit(); }}
+        onSubmit={(e) => {
+          e.preventDefault();
+          onSubmit();
+        }}
       >
         <DialogTitle>{title}</DialogTitle>
-        <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: '16px !important' }}>
+        <DialogContent
+          sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: '16px !important' }}
+        >
           {children}
         </DialogContent>
         <DialogActions>
           <Button onClick={onClose}>Cancel</Button>
-          <Button type="submit" variant="contained">{submitLabel}</Button>
+          <Button type="submit" variant="contained">
+            {submitLabel}
+          </Button>
         </DialogActions>
       </Box>
     </Dialog>

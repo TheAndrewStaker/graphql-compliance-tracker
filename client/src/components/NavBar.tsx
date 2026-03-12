@@ -9,7 +9,7 @@ const TABS = [
 
 export default function NavBar() {
   const { pathname } = useLocation();
-  const currentTab = TABS.find(t => t.path === pathname)?.path ?? '/';
+  const currentTab = TABS.find((t) => t.path === pathname)?.path ?? '/';
 
   return (
     <AppBar position="sticky">

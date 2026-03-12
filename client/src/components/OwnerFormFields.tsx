@@ -20,9 +20,14 @@ interface Props {
 
 export function validateOwnerFields(values: OwnerFieldValues): OwnerFieldErrors {
   const errors: OwnerFieldErrors = {};
-  if (!values.name.trim()) {errors.name = 'Name is required';}
-  if (!values.email.trim()) {errors.email = 'Email is required';}
-  else if (!values.email.includes('@')) {errors.email = 'Enter a valid email address';}
+  if (!values.name.trim()) {
+    errors.name = 'Name is required';
+  }
+  if (!values.email.trim()) {
+    errors.email = 'Email is required';
+  } else if (!values.email.includes('@')) {
+    errors.email = 'Enter a valid email address';
+  }
   return errors;
 }
 
@@ -39,7 +44,9 @@ export default function OwnerFormFields({
       <TextField
         label="Name"
         value={values.name}
-        onChange={e => onChange({ ...values, name: e.target.value })}
+        onChange={(e) => {
+          onChange({ ...values, name: e.target.value });
+        }}
         error={!!errors.name}
         helperText={errors.name}
         autoFocus={autoFocus}
@@ -49,7 +56,9 @@ export default function OwnerFormFields({
         label="Email"
         type="email"
         value={values.email}
-        onChange={e => onChange({ ...values, email: e.target.value })}
+        onChange={(e) => {
+          onChange({ ...values, email: e.target.value });
+        }}
         error={!!errors.email}
         helperText={errors.email}
         fullWidth

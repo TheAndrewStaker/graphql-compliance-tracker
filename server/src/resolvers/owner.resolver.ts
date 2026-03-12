@@ -8,27 +8,29 @@ export const ownerResolvers = {
   },
 
   Mutation: {
-    createOwner: (
-      _: unknown,
-      { input }: { input: { name: string; email: string } }
-    ) => Owner.create(input),
+    createOwner: (_: unknown, { input }: { input: { name: string; email: string } }) =>
+      Owner.create(input),
 
     updateOwner: async (
       _: unknown,
-      { input }: { input: { id: string; name: string; email: string } }
+      { input }: { input: { id: string; name: string; email: string } },
     ) => {
       const owner = await Owner.findByIdAndUpdate(
         input.id,
         { name: input.name, email: input.email },
-        { new: true }
+        { new: true },
       ).exec();
-      if (!owner) {throw new GraphQLError(`Owner ${input.id} not found`);}
+      if (!owner) {
+        throw new GraphQLError(`Owner ${input.id} not found`);
+      }
       return owner;
     },
 
     deleteOwner: async (_: unknown, { id }: { id: string }) => {
       const owner = await Owner.findById(id).exec();
-      if (!owner) {throw new GraphQLError(`Owner ${id} not found`);}
+      if (!owner) {
+        throw new GraphQLError(`Owner ${id} not found`);
+      }
       await Task.deleteMany({ owner: id }).exec();
       await Owner.findByIdAndDelete(id).exec();
       return id;

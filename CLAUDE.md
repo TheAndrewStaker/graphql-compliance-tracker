@@ -1,20 +1,24 @@
 # compliance-tracker — Claude Code Context
 
 ## Project
+
 Full-stack GraphQL compliance task tracker. See PLAN.md for full feature scope and progress.
 See docs/ARCHITECTURE.md for system structure and data flow.
 
 ## Stack
+
 - **Server**: Node.js + TypeScript + Apollo Server 5 + Express 5, port 4000
 - **Client**: React 19 + TypeScript + Apollo Client 4 + MUI 7 + Vite 7
 - **Database**: MongoDB via Mongoose 9 (Docker)
 - **Testing**: Jest (server resolvers) + React Testing Library (components) + Playwright (planned)
 
 ## General principles
+
 - Always follow the official migration guides and documented recommendations from the stack vendors (MUI, Apollo, Vite, etc.) — prefer their prescribed patterns over workarounds, even if the workaround is shorter
 - Prefer the latest compatible version of every package — when adding a dependency or upgrading, use the current stable release unless a specific version constraint is documented here
 
 ## Key conventions
+
 - Every Mongoose query in a resolver must end with `.exec()` to return a real Promise
 - DataLoader instances are created per-request in the Apollo context factory — never share them across requests
 - `dotenv` loads `.env.local` explicitly — not `.env`
@@ -39,11 +43,13 @@ See docs/ARCHITECTURE.md for system structure and data flow.
 - Do not `import React from 'react'` — the automatic JSX transform handles this; import only named exports actually used
 
 ## Environment
+
 - Platform: Windows + Git Bash
 - MongoDB runs in Docker: `docker compose up -d` from project root
 - Server and client dev servers are managed via IntelliJ run configurations — do not attempt to start/stop/kill them from the terminal
 
 ## Running locally
+
 ```bash
 # First time only
 cd server && npm run setup
@@ -63,15 +69,18 @@ npm run validate:features
 ```
 
 ## Testing and sign-off
+
 - Run `npx tsc --noEmit` in both `client/` and `server/` and confirm zero errors before considering any change complete
 - Run `npm test` in both packages and confirm all tests pass
 - UI changes must be verified visually by the user in the running app before the corresponding PLAN.md checkbox is marked done — do not mark UI milestones complete based on passing unit tests alone
 - Manual test steps for UI features live in `docs/testing/manual/<feature-name>.md`
 
 ## Session lifecycle
+
 **Starting a session:** Run `/session:new` first to populate `SESSION_CURRENT.md` with today's focus and carry-over context before any implementation work begins.
 
 **Closing a session**, in this order:
+
 1. Complete all implementation work and confirm `npx tsc --noEmit` + `npm test` pass
 2. Update all docs: `tasks.md` checkboxes, `PLAN.md` status and decisions log, `ARCHITECTURE.md` if patterns changed
 3. Update `SESSION_CURRENT.md` to reflect what was actually completed this session — the close script archives the file as-is, so this must be done before closing
@@ -79,4 +88,5 @@ npm run validate:features
 5. Commit — the archived session file is included in the commit so the session is a closed artifact in git history, not an in-progress one
 
 ## Commits
+
 - Never create git commits — the user commits manually

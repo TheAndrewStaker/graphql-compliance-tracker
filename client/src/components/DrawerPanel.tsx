@@ -1,7 +1,7 @@
 import { Drawer, IconButton, Stack, Typography } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import DrawerContent from '@/components/DrawerContent';
-import {type ReactNode} from 'react';
+import type { ReactNode } from 'react';
 
 interface Props {
   title: string;

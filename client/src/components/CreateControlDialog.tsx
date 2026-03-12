@@ -26,11 +26,16 @@ export default function CreateControlDialog({ open, onClose }: Props) {
 
   const [createControl] = useMutation(CreateControlDocument, {
     update(cache, { data }) {
-      if (!data) { return; }
+      if (!data) {
+        return;
+      }
       cache.modify({
         fields: {
           controls(existingRefs = [], { toReference }) {
-            return [...existingRefs, toReference({ __typename: 'Control', id: data.createControl.id })];
+            return [
+              ...existingRefs,
+              toReference({ __typename: 'Control', id: data.createControl.id }),
+            ];
           },
         },
       });
@@ -46,7 +51,9 @@ export default function CreateControlDialog({ open, onClose }: Props) {
   function handleSubmit() {
     const next = validateControlFields(values);
     setErrors(next);
-    if (Object.keys(next).length > 0) { return; }
+    if (Object.keys(next).length > 0) {
+      return;
+    }
 
     handleClose();
     void createControl({
@@ -71,7 +78,13 @@ export default function CreateControlDialog({ open, onClose }: Props) {
   }
 
   return (
-    <FormDialog open={open} title="Create Control" submitLabel="Create" onClose={handleClose} onSubmit={handleSubmit}>
+    <FormDialog
+      open={open}
+      title="Create Control"
+      submitLabel="Create"
+      onClose={handleClose}
+      onSubmit={handleSubmit}
+    >
       <ControlFormFields values={values} errors={errors} autoFocus onChange={setValues} />
     </FormDialog>
   );

@@ -11,7 +11,7 @@ describe('DeleteConfirmDialog', () => {
         title="Delete this item?"
         onConfirm={onConfirm}
         onClose={jest.fn()}
-      />
+      />,
     );
     await userEvent.click(screen.getByRole('button', { name: 'Delete' }));
     expect(onConfirm).toHaveBeenCalledTimes(1);
@@ -26,7 +26,7 @@ describe('DeleteConfirmDialog', () => {
         title="Delete this item?"
         onConfirm={onConfirm}
         onClose={onClose}
-      />
+      />,
     );
     await userEvent.click(screen.getByRole('button', { name: 'Cancel' }));
     expect(onClose).toHaveBeenCalledTimes(1);
@@ -41,7 +41,7 @@ describe('DeleteConfirmDialog', () => {
         warning="All related records will also be deleted."
         onConfirm={jest.fn()}
         onClose={jest.fn()}
-      />
+      />,
     );
     expect(screen.getByText('All related records will also be deleted.')).toBeInTheDocument();
   });

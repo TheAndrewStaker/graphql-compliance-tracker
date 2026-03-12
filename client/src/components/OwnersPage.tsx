@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Button, Stack, Typography } from '@mui/material';
 import { DataGrid, GridActionsCellItem, type GridColDef } from '@mui/x-data-grid';
-import { type Reference } from '@apollo/client';
 import { useQuery, useMutation } from '@apollo/client/react';
 import {
   GetOwnersDocument,
@@ -9,11 +8,15 @@ import {
   OwnerListFieldsFragmentDoc,
   OwnerEditFieldsFragmentDoc,
 } from '@/graphql/__generated__/graphql';
-import { useFragment as readFragment, type FragmentType } from '@/graphql/__generated__/fragment-masking';
+import {
+  useFragment as readFragment,
+  type FragmentType,
+} from '@/graphql/__generated__/fragment-masking';
 import PageContainer from '@/components/PageContainer';
 import CreateOwnerDialog from '@/components/CreateOwnerDialog';
 import EditOwnerDialog from '@/components/EditOwnerDialog';
 import DeleteConfirmDialog from '@/components/DeleteConfirmDialog';
+import { evictRelatedTasks } from '@/apollo/evictRelatedTasks';
 
 type ListOwner = FragmentType<typeof OwnerListFieldsFragmentDoc>;
 type EditOwner = FragmentType<typeof OwnerEditFieldsFragmentDoc>;
@@ -27,27 +30,14 @@ export default function OwnersPage() {
 
   const [deleteOwnerMutation] = useMutation(DeleteOwnerDocument, {
     update(cache, { data: result }) {
-      if (!result) { return; }
-      const deletedId = result.deleteOwner;
-      const taskIds: string[] = [];
-      cache.modify({
-        fields: {
-          tasks(existingRefs: readonly Reference[] = [], { readField }) {
-            return existingRefs.filter(ref => {
-              const owner = readField('owner', ref) as Reference | undefined;
-              if (owner && readField('id', owner) === deletedId) {
-                const id = readField('id', ref) as string | undefined;
-                if (id) { taskIds.push(id); }
-                return false;
-              }
-              return true;
-            });
-          },
-        },
-      });
-      for (const id of taskIds) {
-        cache.evict({ id: cache.identify({ __typename: 'Task', id }) });
+      if (!result) {
+        return;
       }
+      const deletedId = result.deleteOwner;
+      evictRelatedTasks(cache, {
+        deletedId,
+        relationField: 'control',
+      });
       cache.evict({ id: cache.identify({ __typename: 'Owner', id: deletedId }) });
       cache.gc();
     },
@@ -67,7 +57,8 @@ export default function OwnersPage() {
       field: 'email',
       headerName: 'Email',
       flex: 1,
-      valueGetter: (_value, row) => readFragment(OwnerListFieldsFragmentDoc, row as ListOwner).email,
+      valueGetter: (_value, row) =>
+        readFragment(OwnerListFieldsFragmentDoc, row as ListOwner).email,
     },
     {
       field: 'actions',
@@ -79,20 +70,26 @@ export default function OwnersPage() {
           key="edit"
           label="Edit"
           showInMenu
-          onClick={() => setEditOwner(row as EditOwner)}
+          onClick={() => {
+            setEditOwner(row as EditOwner);
+          }}
         />,
         <GridActionsCellItem
           key="delete"
           label="Delete"
           showInMenu
-          onClick={() => setDeleteOwner(row as EditOwner)}
+          onClick={() => {
+            setDeleteOwner(row as EditOwner);
+          }}
         />,
       ],
     },
   ];
 
   function handleDeleteConfirm() {
-    if (!deleteOwner) { return; }
+    if (!deleteOwner) {
+      return;
+    }
     const { id } = readFragment(OwnerEditFieldsFragmentDoc, deleteOwner);
     void deleteOwnerMutation({
       variables: { id },
@@ -105,7 +102,14 @@ export default function OwnersPage() {
     <PageContainer>
       <Stack direction="row" justifyContent="space-between" alignItems="center">
         <Typography variant="h5">Owners</Typography>
-        <Button variant="contained" onClick={() => setCreateOpen(true)}>Create Owner</Button>
+        <Button
+          variant="contained"
+          onClick={() => {
+            setCreateOpen(true);
+          }}
+        >
+          Create Owner
+        </Button>
       </Stack>
 
       <DataGrid
@@ -117,14 +121,21 @@ export default function OwnersPage() {
         sx={{ height: 'auto' }}
       />
 
-      <CreateOwnerDialog open={createOpen} onClose={() => setCreateOpen(false)} />
+      <CreateOwnerDialog
+        open={createOpen}
+        onClose={() => {
+          setCreateOpen(false);
+        }}
+      />
 
       {editOwner && (
         <EditOwnerDialog
           key={editOwnerData?.id}
           open={!!editOwner}
           owner={editOwner}
-          onClose={() => setEditOwner(undefined)}
+          onClose={() => {
+            setEditOwner(undefined);
+          }}
         />
       )}
 
@@ -133,7 +144,9 @@ export default function OwnersPage() {
         title={`Delete ${deleteOwnerData?.name ?? 'this owner'}?`}
         warning="Any tasks assigned to them will also be deleted."
         onConfirm={handleDeleteConfirm}
-        onClose={() => setDeleteOwner(undefined)}
+        onClose={() => {
+          setDeleteOwner(undefined);
+        }}
       />
     </PageContainer>
   );

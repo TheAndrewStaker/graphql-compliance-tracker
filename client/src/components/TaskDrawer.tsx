@@ -10,10 +10,7 @@ import {
 } from '@mui/material';
 import DrawerPanel from '@/components/DrawerPanel';
 import { useQuery, useMutation } from '@apollo/client/react';
-import {
-  GetTasksByControlDocument,
-  CompleteTaskDocument,
-} from '@/graphql/__generated__/graphql';
+import { GetTasksByControlDocument, CompleteTaskDocument } from '@/graphql/__generated__/graphql';
 
 interface Props {
   controlId?: string;
@@ -56,7 +53,9 @@ export default function TaskDrawer({ controlId, onClose }: Props) {
                 <Checkbox
                   checked={task.completed}
                   disabled={task.completed}
-                  onChange={() => handleComplete(task.id)}
+                  onChange={() => {
+                    handleComplete(task.id);
+                  }}
                   edge="end"
                 />
               }

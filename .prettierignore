@@ -1,0 +1,5 @@
+node_modules
+dist
+coverage
+
+client/src/graphql/__generated__

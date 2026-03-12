@@ -18,7 +18,10 @@ interface Props {
 export default function EditOwnerDialog({ open, owner, onClose }: Props) {
   const ownerData = useFragment(OwnerEditFieldsFragmentDoc, owner);
 
-  const [values, setValues] = useState<OwnerFieldValues>({ name: ownerData.name, email: ownerData.email });
+  const [values, setValues] = useState<OwnerFieldValues>({
+    name: ownerData.name,
+    email: ownerData.email,
+  });
   const [errors, setErrors] = useState<OwnerFieldErrors>({});
 
   const [updateOwner] = useMutation(UpdateOwnerDocument);
@@ -26,13 +29,22 @@ export default function EditOwnerDialog({ open, owner, onClose }: Props) {
   function handleSubmit() {
     const next = validateOwnerFields(values);
     setErrors(next);
-    if (Object.keys(next).length > 0) { return; }
+    if (Object.keys(next).length > 0) {
+      return;
+    }
 
     onClose();
     void updateOwner({
-      variables: { input: { id: ownerData.id, name: values.name.trim(), email: values.email.trim() } },
+      variables: {
+        input: { id: ownerData.id, name: values.name.trim(), email: values.email.trim() },
+      },
       optimisticResponse: {
-        updateOwner: { __typename: 'Owner', id: ownerData.id, name: values.name.trim(), email: values.email.trim() },
+        updateOwner: {
+          __typename: 'Owner',
+          id: ownerData.id,
+          name: values.name.trim(),
+          email: values.email.trim(),
+        },
       },
     });
   }

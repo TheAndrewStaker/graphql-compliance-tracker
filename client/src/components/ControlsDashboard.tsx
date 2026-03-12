@@ -1,7 +1,19 @@
 import { useState } from 'react';
-import { Button, Stack, ToggleButton, ToggleButtonGroup, Typography, useMediaQuery, useTheme } from '@mui/material';
-import { DataGrid, GridActionsCellItem, type GridColDef, type GridRowParams } from '@mui/x-data-grid';
-import { type Reference } from '@apollo/client';
+import {
+  Button,
+  Stack,
+  ToggleButton,
+  ToggleButtonGroup,
+  Typography,
+  useMediaQuery,
+  useTheme,
+} from '@mui/material';
+import {
+  DataGrid,
+  GridActionsCellItem,
+  type GridColDef,
+  type GridRowParams,
+} from '@mui/x-data-grid';
 import StatusBadge from '@/components/StatusBadge';
 import TaskDrawer from '@/components/TaskDrawer';
 import PageContainer from '@/components/PageContainer';
@@ -16,7 +28,11 @@ import {
   ControlEditFieldsFragmentDoc,
   type ControlStatus,
 } from '@/graphql/__generated__/graphql';
-import { useFragment as readFragment, type FragmentType } from '@/graphql/__generated__/fragment-masking';
+import {
+  useFragment as readFragment,
+  type FragmentType,
+} from '@/graphql/__generated__/fragment-masking';
+import { evictRelatedTasks } from '@/apollo/evictRelatedTasks';
 
 type StatusFilter = ControlStatus | 'ALL';
 type ListControl = FragmentType<typeof ControlListFieldsFragmentDoc>;
@@ -36,27 +52,14 @@ export default function ControlsDashboard() {
 
   const [deleteControlMutation] = useMutation(DeleteControlDocument, {
     update(cache, { data: result }) {
-      if (!result) { return; }
-      const deletedId = result.deleteControl;
-      const taskIds: string[] = [];
-      cache.modify({
-        fields: {
-          tasks(existingRefs: readonly Reference[] = [], { readField }) {
-            return existingRefs.filter(ref => {
-              const control = readField('control', ref) as Reference | undefined;
-              if (control && readField('id', control) === deletedId) {
-                const id = readField('id', ref) as string | undefined;
-                if (id) { taskIds.push(id); }
-                return false;
-              }
-              return true;
-            });
-          },
-        },
-      });
-      for (const id of taskIds) {
-        cache.evict({ id: cache.identify({ __typename: 'Task', id }) });
+      if (!result) {
+        return;
       }
+      const deletedId = result.deleteControl;
+      evictRelatedTasks(cache, {
+        deletedId,
+        relationField: 'control',
+      });
       cache.evict({ id: cache.identify({ __typename: 'Control', id: deletedId }) });
       cache.gc();
     },
@@ -66,7 +69,9 @@ export default function ControlsDashboard() {
   const deleteControlData = readFragment(ControlEditFieldsFragmentDoc, deleteControl);
 
   const rows = (data?.controls ?? []).filter(
-    (c) => statusFilter === 'ALL' || readFragment(ControlListFieldsFragmentDoc, c as ListControl).status === statusFilter
+    (c) =>
+      statusFilter === 'ALL' ||
+      readFragment(ControlListFieldsFragmentDoc, c as ListControl).status === statusFilter,
   );
 
   const columns: GridColDef[] = [
@@ -74,19 +79,22 @@ export default function ControlsDashboard() {
       field: 'title',
       headerName: 'Title',
       flex: 2,
-      valueGetter: (_value, row) => readFragment(ControlListFieldsFragmentDoc, row as ListControl).title,
+      valueGetter: (_value, row) =>
+        readFragment(ControlListFieldsFragmentDoc, row as ListControl).title,
     },
     {
       field: 'category',
       headerName: 'Category',
       flex: 1,
-      valueGetter: (_value, row) => readFragment(ControlListFieldsFragmentDoc, row as ListControl).category,
+      valueGetter: (_value, row) =>
+        readFragment(ControlListFieldsFragmentDoc, row as ListControl).category,
     },
     {
       field: 'status',
       headerName: 'Status',
       flex: 1,
-      valueGetter: (_value, row) => readFragment(ControlListFieldsFragmentDoc, row as ListControl).status,
+      valueGetter: (_value, row) =>
+        readFragment(ControlListFieldsFragmentDoc, row as ListControl).status,
       renderCell: ({ value }) => <StatusBadge status={value as ControlStatus} />,
     },
     {
@@ -99,20 +107,26 @@ export default function ControlsDashboard() {
           key="edit"
           label="Edit"
           showInMenu
-          onClick={() => setEditControl(row as EditControl)}
+          onClick={() => {
+            setEditControl(row as EditControl);
+          }}
         />,
         <GridActionsCellItem
           key="delete"
           label="Delete"
           showInMenu
-          onClick={() => setDeleteControl(row as EditControl)}
+          onClick={() => {
+            setDeleteControl(row as EditControl);
+          }}
         />,
       ],
     },
   ];
 
   function handleDeleteConfirm() {
-    if (!deleteControl) { return; }
+    if (!deleteControl) {
+      return;
+    }
     const { id } = readFragment(ControlEditFieldsFragmentDoc, deleteControl);
     void deleteControlMutation({
       variables: { id },
@@ -125,13 +139,24 @@ export default function ControlsDashboard() {
     <PageContainer>
       <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
         <Typography variant="h5">Compliance Controls</Typography>
-        <Button variant="contained" onClick={() => setCreateOpen(true)}>Create Control</Button>
+        <Button
+          variant="contained"
+          onClick={() => {
+            setCreateOpen(true);
+          }}
+        >
+          Create Control
+        </Button>
       </Stack>
 
       <ToggleButtonGroup
         value={statusFilter}
         exclusive
-        onChange={(_, val) => val && setStatusFilter(val)}
+        onChange={(_, val) => {
+          if (val) {
+            setStatusFilter(val);
+          }
+        }}
         size="small"
         sx={{ flexWrap: 'wrap' }}
       >
@@ -147,19 +172,28 @@ export default function ControlsDashboard() {
         loading={loading}
         pageSizeOptions={[10, 25]}
         initialState={{ pagination: { paginationModel: { pageSize: 10 } } }}
-        onRowClick={({ id }) => setSelectedControlId(String(id))}
+        onRowClick={({ id }) => {
+          setSelectedControlId(String(id));
+        }}
         columnVisibilityModel={{ category: !isMobile }}
         sx={{ height: 'auto', cursor: 'pointer' }}
       />
 
-      <CreateControlDialog open={createOpen} onClose={() => setCreateOpen(false)} />
+      <CreateControlDialog
+        open={createOpen}
+        onClose={() => {
+          setCreateOpen(false);
+        }}
+      />
 
       {editControl && (
         <EditControlDialog
           key={editControlData?.id}
           open={!!editControl}
           control={editControl}
-          onClose={() => setEditControl(undefined)}
+          onClose={() => {
+            setEditControl(undefined);
+          }}
         />
       )}
 
@@ -168,12 +202,16 @@ export default function ControlsDashboard() {
         title={`Delete "${deleteControlData?.title ?? 'control'}"?`}
         warning="Any tasks assigned to this control will also be deleted."
         onConfirm={handleDeleteConfirm}
-        onClose={() => setDeleteControl(undefined)}
+        onClose={() => {
+          setDeleteControl(undefined);
+        }}
       />
 
       <TaskDrawer
         controlId={selectedControlId}
-        onClose={() => setSelectedControlId(undefined)}
+        onClose={() => {
+          setSelectedControlId(undefined);
+        }}
       />
     </PageContainer>
   );

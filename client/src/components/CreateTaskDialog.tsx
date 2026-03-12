@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { type Reference } from '@apollo/client';
+import type { Reference } from '@apollo/client';
 import { useMutation } from '@apollo/client/react';
 import { CreateTaskDocument } from '@/graphql/__generated__/graphql';
 import FormDialog from '@/components/FormDialog';
@@ -32,14 +32,18 @@ export default function CreateTaskDialog({ open, onClose }: Props) {
 
   const [createTask] = useMutation(CreateTaskDocument, {
     update(cache, { data }) {
-      if (!data) { return; }
+      if (!data) {
+        return;
+      }
       cache.modify({
         fields: {
           tasks(existingRefs = [], { toReference }) {
             return [...existingRefs, toReference({ __typename: 'Task', id: data.createTask.id })];
           },
           tasksByControl(existingRefs, { storeFieldName, toReference }) {
-            if (!storeFieldName.includes(JSON.stringify(data.createTask.control.id))) { return existingRefs; }
+            if (!storeFieldName.includes(JSON.stringify(data.createTask.control.id))) {
+              return existingRefs;
+            }
             const refs = Array.isArray(existingRefs) ? (existingRefs as Reference[]) : [];
             const ref = toReference({ __typename: 'Task', id: data.createTask.id });
             return ref ? [...refs, ref] : refs;
@@ -58,7 +62,9 @@ export default function CreateTaskDialog({ open, onClose }: Props) {
   function handleSubmit() {
     const next = validateTaskFields(values);
     setErrors(next);
-    if (Object.keys(next).length > 0) { return; }
+    if (Object.keys(next).length > 0) {
+      return;
+    }
 
     handleClose();
     void createTask({
@@ -87,7 +93,13 @@ export default function CreateTaskDialog({ open, onClose }: Props) {
   }
 
   return (
-    <FormDialog open={open} title="Create Task" submitLabel="Create" onClose={handleClose} onSubmit={handleSubmit}>
+    <FormDialog
+      open={open}
+      title="Create Task"
+      submitLabel="Create"
+      onClose={handleClose}
+      onSubmit={handleSubmit}
+    >
       <TaskFormFields values={values} errors={errors} autoFocus onChange={setValues} />
     </FormDialog>
   );

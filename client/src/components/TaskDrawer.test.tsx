@@ -41,7 +41,7 @@ describe('TaskDrawer', () => {
     render(
       <MockedProvider mocks={mocks}>
         <TaskDrawer controlId="ctrl1" onClose={jest.fn()} />
-      </MockedProvider>
+      </MockedProvider>,
     );
 
     expect(await screen.findByText('Review access logs')).toBeInTheDocument();
@@ -52,7 +52,7 @@ describe('TaskDrawer', () => {
     render(
       <MockedProvider mocks={mocks}>
         <TaskDrawer controlId="ctrl1" onClose={jest.fn()} />
-      </MockedProvider>
+      </MockedProvider>,
     );
 
     expect(await screen.findByText(new RegExp(FORMATTED_DATE))).toBeInTheDocument();
@@ -62,7 +62,7 @@ describe('TaskDrawer', () => {
     render(
       <MockedProvider mocks={[]}>
         <TaskDrawer onClose={jest.fn()} />
-      </MockedProvider>
+      </MockedProvider>,
     );
 
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();

@@ -1,96 +1,104 @@
 import { defineConfig } from 'eslint/config';
+import eslintConfigPrettier from 'eslint-config-prettier/flat';
 import react from 'eslint-plugin-react';
 import reactHooks from 'eslint-plugin-react-hooks';
 import baseConfig from './config/eslint/index.ts';
 
-// TODO fix ide errors
-
-export default defineConfig([
+export default defineConfig(
   ...baseConfig,
 
-  // ── Type-checked rules ──────────────────────────────────────────────────────
-  // Require parserOptions.project, which is set per-package below.
-  // no-misused-promises: attributes:false allows async JSX event handlers,
-  // which is idiomatic in React (onClick={async () => { ... }}).
-  {
-    files: ['server/src/**/*.ts', 'client/src/**/*.{ts,tsx}'],
-    rules: {
-      '@typescript-eslint/no-floating-promises': 'error',
-      '@typescript-eslint/no-misused-promises': ['error', { checksVoidReturn: { attributes: false } }],
-      '@typescript-eslint/await-thenable': 'error',
-      '@typescript-eslint/switch-exhaustiveness-check': 'error',
-    },
-  },
-
-  // ── Server ──────────────────────────────────────────────────────────────────
+  // ── Server typed rules ─────────────────────────────────────────────
   {
     files: ['server/src/**/*.ts'],
     languageOptions: {
       parserOptions: {
         project: './server/tsconfig.lint.json',
-        tsconfigRootDir: import.meta.dirname,
       },
     },
     rules: {
+      '@typescript-eslint/no-floating-promises': 'error',
+      '@typescript-eslint/no-misused-promises': [
+        'error',
+        { checksVoidReturn: { attributes: false } },
+      ],
+      '@typescript-eslint/await-thenable': 'error',
+      '@typescript-eslint/switch-exhaustiveness-check': 'error',
+      '@typescript-eslint/no-unnecessary-condition': 'error',
+      '@typescript-eslint/no-unnecessary-type-assertion': 'error',
+      '@typescript-eslint/no-confusing-void-expression': 'error',
+
       'func-style': ['error', 'expression', { allowArrowFunctions: true }],
     },
   },
 
-  // ── Client — all TS/TSX ─────────────────────────────────────────────────────
+  // ── Client typed + React rules ─────────────────────────────────────
   {
     files: ['client/src/**/*.{ts,tsx}'],
-    plugins: {
-      react,
-      'react-hooks': reactHooks,
-    },
+    extends: [react.configs.flat.recommended, reactHooks.configs.flat['recommended-latest']],
     languageOptions: {
       parserOptions: {
         project: './client/tsconfig.json',
-        tsconfigRootDir: import.meta.dirname,
       },
     },
     settings: {
       react: { version: 'detect' },
     },
     rules: {
-      ...react.configs.flat.recommended.rules,
-      ...reactHooks.configs.flat['recommended-latest'].rules,
+      '@typescript-eslint/no-floating-promises': 'error',
+      '@typescript-eslint/no-misused-promises': [
+        'error',
+        { checksVoidReturn: { attributes: false } },
+      ],
+      '@typescript-eslint/await-thenable': 'error',
+      '@typescript-eslint/switch-exhaustiveness-check': 'error',
+      '@typescript-eslint/no-unnecessary-condition': 'error',
+      '@typescript-eslint/no-unnecessary-type-assertion': 'error',
+      '@typescript-eslint/no-confusing-void-expression': 'error',
 
-      // Not needed with the React 19 JSX transform.
       'react/react-in-jsx-scope': 'off',
-      // TypeScript handles prop validation.
       'react/prop-types': 'off',
-
       'react/no-unstable-nested-components': 'error',
       'react/self-closing-comp': 'error',
       'react/jsx-no-useless-fragment': 'error',
-      // Remove redundant curlies: prop={"value"} → prop="value"
       'react/jsx-curly-brace-presence': ['error', { props: 'never', children: 'never' }],
-      // Boolean shorthand: show={true} → show
       'react/jsx-boolean-value': ['error', 'never'],
-      // Warn (not error) — index keys are sometimes acceptable.
       'react/no-array-index-key': 'warn',
     },
   },
 
-  // ── Client — components (.tsx) ───────────────────────────────────────────────
-  // Named components use function declarations; anonymous use arrow functions.
-  // func-style is not applied here — react/function-component-definition takes over.
+  // ── React components (.tsx) ────────────────────────────────────────
   {
     files: ['client/src/**/*.tsx'],
     rules: {
       'react/function-component-definition': [
         'error',
-        { namedComponents: 'function-declaration', unnamedComponents: 'arrow-function' },
+        {
+          namedComponents: 'function-declaration',
+          unnamedComponents: 'arrow-function',
+        },
       ],
+
+      'func-style': 'off',
     },
   },
 
-  // ── Client — utilities and hooks (.ts only) ──────────────────────────────────
+  // ── Client non-component TS ────────────────────────────────────────
   {
     files: ['client/src/**/*.ts'],
     rules: {
       'func-style': ['error', 'expression', { allowArrowFunctions: true }],
     },
   },
-]);
+
+  // ── Config files (not type-checked) ─────────────────────────────────
+  {
+    files: ['**/*.config.{js,cjs,mjs,ts}', '**/jest.config.{js,cjs,mjs,ts}'],
+    rules: {
+      'no-console': 'off',
+      'func-style': 'off',
+    },
+  },
+
+  // ── Prettier compatibility (must be last) ───────────────────────────
+  eslintConfigPrettier,
+);

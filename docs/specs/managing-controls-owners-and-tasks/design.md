@@ -10,8 +10,8 @@ Reference: `docs/ARCHITECTURE.md` for system-wide context.
 
 ## New dependencies
 
-| Package | Reason |
-|---|---|
+| Package                     | Reason       |
+| --------------------------- | ------------ |
 | `react-router-dom` (client) | Page routing |
 
 No date picker library — Task due date uses `<TextField type="date">` to avoid an additional MUI X dependency.
@@ -46,9 +46,9 @@ input UpdateTaskInput {
 type Mutation {
   # existing ...
   updateControl(input: UpdateControlInput!): Control!
-  deleteControl(id: ID!): ID!        # returns deleted id
+  deleteControl(id: ID!): ID! # returns deleted id
   updateOwner(input: UpdateOwnerInput!): Owner!
-  deleteOwner(id: ID!): ID!          # blocked if owner has tasks
+  deleteOwner(id: ID!): ID! # blocked if owner has tasks
   updateTask(input: UpdateTaskInput!): Task!
   deleteTask(id: ID!): ID!
 }
@@ -85,24 +85,26 @@ type Mutation {
 
 ### New components
 
-| Component | Responsibility |
-|---|---|
-| `NavBar` | MUI `AppBar` with `Tabs` (or nav links) for Controls / Owners / Tasks. Active tab derived from `useLocation`. |
-| `ControlsPage` | Extends existing `ControlsDashboard` — adds Create button, Edit and Delete actions per row |
-| `OwnersPage` | DataGrid of owners + Create button + row Edit/Delete |
-| `TasksPage` | DataGrid of all tasks + Create button + row Edit/Delete |
-| `ControlDialog` | Create / Edit form for a Control (title, description, category, status) |
-| `OwnerDialog` | Create / Edit form for an Owner (name, email) |
-| `TaskDialog` | Create / Edit form for a Task (control select, owner select, dueDate, notes) |
-| `DeleteConfirmDialog` | Generic reusable confirmation dialog — accepts `entityName` and `onConfirm` |
+| Component             | Responsibility                                                                                                |
+| --------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `NavBar`              | MUI `AppBar` with `Tabs` (or nav links) for Controls / Owners / Tasks. Active tab derived from `useLocation`. |
+| `ControlsPage`        | Extends existing `ControlsDashboard` — adds Create button, Edit and Delete actions per row                    |
+| `OwnersPage`          | DataGrid of owners + Create button + row Edit/Delete                                                          |
+| `TasksPage`           | DataGrid of all tasks + Create button + row Edit/Delete                                                       |
+| `ControlDialog`       | Create / Edit form for a Control (title, description, category, status)                                       |
+| `OwnerDialog`         | Create / Edit form for an Owner (name, email)                                                                 |
+| `TaskDialog`          | Create / Edit form for a Task (control select, owner select, dueDate, notes)                                  |
+| `DeleteConfirmDialog` | Generic reusable confirmation dialog — accepts `entityName` and `onConfirm`                                   |
 
 ### New `.graphql` operations
 
 **queries.graphql additions:**
+
 - `GetOwners` — id, name, email
 - `GetTasks` — id, notes, completed, dueDate, control { id, title }, owner { id, name }
 
 **mutations.graphql additions:**
+
 - `UpdateControl`, `DeleteControl`
 - `CreateOwner` (already in schema, add client operation)
 - `UpdateOwner`, `DeleteOwner`
@@ -115,36 +117,36 @@ Run `npm run codegen` after all schema and operation changes.
 
 Apollo Client's `optimisticResponse` is used for all mutations so the UI reflects changes instantly with no loading states. This is well supported by our stack — `completeTask` already uses this pattern.
 
-| Operation | Strategy |
-|---|---|
-| **Update** | Full `optimisticResponse` — all fields are known client-side. Apollo merges by cache key (`id`) immediately. Rolls back automatically on server error. |
-| **Delete** | `optimisticResponse` returns the deleted `id`; the `update` callback calls `cache.evict` + `cache.gc()` immediately. Rolls back on error. |
+| Operation  | Strategy                                                                                                                                                                                                                                                                                                                                                                                         |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Update** | Full `optimisticResponse` — all fields are known client-side. Apollo merges by cache key (`id`) immediately. Rolls back automatically on server error.                                                                                                                                                                                                                                           |
+| **Delete** | `optimisticResponse` returns the deleted `id`; the `update` callback calls `cache.evict` + `cache.gc()` immediately. Rolls back on error.                                                                                                                                                                                                                                                        |
 | **Create** | `optimisticResponse` uses `id: 'temp-id'` as a placeholder; the `update` callback appends to the cached list. Apollo replaces the temp entry with the real record when the server responds. Because the real `id` is unknown until the server responds, the dialog stays open until the mutation settles — this is the one case where a brief loading state on the submit button is appropriate. |
 
 Server errors (e.g. duplicate Owner email, delete-owner-with-tasks) surface via Apollo's error handling and are displayed in the open dialog. The optimistic cache write is rolled back automatically.
 
 ### Cache management
 
-| Operation | Cache strategy |
-|---|---|
-| Create | `update` callback: read cached list query, append optimistic item, write back |
-| Update | Automatic — Apollo merges by cache key (`id`) |
-| Delete Control | `update` callback: `cache.evict` the Control + each cascaded Task; `cache.gc()` |
-| Delete Owner / Task | `update` callback: `cache.evict` the item; `cache.gc()` |
+| Operation           | Cache strategy                                                                  |
+| ------------------- | ------------------------------------------------------------------------------- |
+| Create              | `update` callback: read cached list query, append optimistic item, write back   |
+| Update              | Automatic — Apollo merges by cache key (`id`)                                   |
+| Delete Control      | `update` callback: `cache.evict` the Control + each cascaded Task; `cache.gc()` |
+| Delete Owner / Task | `update` callback: `cache.evict` the item; `cache.gc()`                         |
 
 ### Form validation
 
 Client-side only — checked before the mutation fires. No external form library.
 
-| Field | Rule |
-|---|---|
-| Control title | Required, non-empty after trim |
-| Control category | Required, non-empty after trim |
-| Owner name | Required, non-empty after trim |
-| Owner email | Required, basic format check (`includes('@')`) |
-| Task control | Required — must have a selection |
-| Task owner | Required — must have a selection |
-| Task dueDate | Required, must be a valid date string |
+| Field            | Rule                                           |
+| ---------------- | ---------------------------------------------- |
+| Control title    | Required, non-empty after trim                 |
+| Control category | Required, non-empty after trim                 |
+| Owner name       | Required, non-empty after trim                 |
+| Owner email      | Required, basic format check (`includes('@')`) |
+| Task control     | Required — must have a selection               |
+| Task owner       | Required — must have a selection               |
+| Task dueDate     | Required, must be a valid date string          |
 
 ### Keyboard behaviour
 

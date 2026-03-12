@@ -23,13 +23,15 @@ const bootstrap = async () => {
     express.json(),
     expressMiddleware(server, {
       context: async () => ({ ownerLoader: createOwnerLoader() }),
-    })
+    }),
   );
 
   app.get('/health', (_req, res) => res.json({ status: 'ok' }));
 
   const port = process.env.PORT ?? 4000;
-  app.listen(port, () => console.info(`Server ready at http://localhost:${port}/graphql`));
+  app.listen(port, () => {
+    console.info(`Server ready at http://localhost:${port}/graphql`);
+  });
 };
 
 bootstrap().catch(console.error);

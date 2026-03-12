@@ -6,6 +6,7 @@ import NavBar from '@/components/NavBar';
 import ControlsDashboard from '@/components/ControlsDashboard';
 import OwnersPage from '@/components/OwnersPage';
 import TasksPage from '@/components/TasksPage';
+import React from 'react';
 
 const theme = createTheme({
   typography: {

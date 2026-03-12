@@ -19,7 +19,9 @@ beforeEach(() => jest.clearAllMocks());
 describe('updateControlStatus', () => {
   it('returns the updated control with the new status', async () => {
     const updated = { _id: 'ctrl1', title: 'Access Review', status: 'PASSING' };
-    mockControl.findByIdAndUpdate.mockReturnValue({ exec: jest.fn().mockResolvedValue(updated) } as never);
+    mockControl.findByIdAndUpdate.mockReturnValue({
+      exec: jest.fn().mockResolvedValue(updated),
+    } as never);
 
     const result = await resolvers.Mutation.updateControlStatus(undefined, {
       input: { id: 'ctrl1', status: 'PASSING' },
@@ -29,17 +31,19 @@ describe('updateControlStatus', () => {
     expect(mockControl.findByIdAndUpdate).toHaveBeenCalledWith(
       'ctrl1',
       { status: 'PASSING' },
-      { new: true }
+      { new: true },
     );
   });
 
   it('throws GraphQLError when the control does not exist', async () => {
-    mockControl.findByIdAndUpdate.mockReturnValue({ exec: jest.fn().mockResolvedValue(null) } as never);
+    mockControl.findByIdAndUpdate.mockReturnValue({
+      exec: jest.fn().mockResolvedValue(null),
+    } as never);
 
     await expect(
       resolvers.Mutation.updateControlStatus(undefined, {
         input: { id: 'missing', status: 'FAILING' },
-      })
+      }),
     ).rejects.toThrow(GraphQLError);
   });
 });
@@ -49,7 +53,9 @@ describe('updateControlStatus', () => {
 describe('updateControl', () => {
   it('returns the updated control with all fields applied', async () => {
     const updated = { _id: 'ctrl1', title: 'New Title', category: 'Access', status: 'PASSING' };
-    mockControl.findByIdAndUpdate.mockReturnValue({ exec: jest.fn().mockResolvedValue(updated) } as never);
+    mockControl.findByIdAndUpdate.mockReturnValue({
+      exec: jest.fn().mockResolvedValue(updated),
+    } as never);
 
     const result = await resolvers.Mutation.updateControl(undefined, {
       input: { id: 'ctrl1', title: 'New Title', category: 'Access', status: 'PASSING' },
@@ -59,12 +65,14 @@ describe('updateControl', () => {
   });
 
   it('throws GraphQLError when the control does not exist', async () => {
-    mockControl.findByIdAndUpdate.mockReturnValue({ exec: jest.fn().mockResolvedValue(null) } as never);
+    mockControl.findByIdAndUpdate.mockReturnValue({
+      exec: jest.fn().mockResolvedValue(null),
+    } as never);
 
     await expect(
       resolvers.Mutation.updateControl(undefined, {
         input: { id: 'missing', title: 'x', category: 'x', status: 'UNKNOWN' },
-      })
+      }),
     ).rejects.toThrow(GraphQLError);
   });
 });
@@ -75,8 +83,12 @@ describe('deleteControl', () => {
   it('cascades to tasks and returns the deleted id', async () => {
     const control = { _id: 'ctrl1', title: 'Old Control' };
     mockControl.findById.mockReturnValue({ exec: jest.fn().mockResolvedValue(control) } as never);
-    mockTask.deleteMany.mockReturnValue({ exec: jest.fn().mockResolvedValue({ deletedCount: 2 }) } as never);
-    mockControl.findByIdAndDelete.mockReturnValue({ exec: jest.fn().mockResolvedValue(control) } as never);
+    mockTask.deleteMany.mockReturnValue({
+      exec: jest.fn().mockResolvedValue({ deletedCount: 2 }),
+    } as never);
+    mockControl.findByIdAndDelete.mockReturnValue({
+      exec: jest.fn().mockResolvedValue(control),
+    } as never);
 
     const result = await resolvers.Mutation.deleteControl(undefined, { id: 'ctrl1' });
 
@@ -87,9 +99,9 @@ describe('deleteControl', () => {
   it('throws GraphQLError when the control does not exist', async () => {
     mockControl.findById.mockReturnValue({ exec: jest.fn().mockResolvedValue(null) } as never);
 
-    await expect(
-      resolvers.Mutation.deleteControl(undefined, { id: 'missing' })
-    ).rejects.toThrow(GraphQLError);
+    await expect(resolvers.Mutation.deleteControl(undefined, { id: 'missing' })).rejects.toThrow(
+      GraphQLError,
+    );
   });
 });
 
@@ -99,8 +111,12 @@ describe('deleteOwner', () => {
   it('cascades to tasks and returns the deleted id', async () => {
     const owner = { _id: 'owner1', name: 'Alice' };
     mockOwner.findById.mockReturnValue({ exec: jest.fn().mockResolvedValue(owner) } as never);
-    mockTask.deleteMany.mockReturnValue({ exec: jest.fn().mockResolvedValue({ deletedCount: 2 }) } as never);
-    mockOwner.findByIdAndDelete.mockReturnValue({ exec: jest.fn().mockResolvedValue(owner) } as never);
+    mockTask.deleteMany.mockReturnValue({
+      exec: jest.fn().mockResolvedValue({ deletedCount: 2 }),
+    } as never);
+    mockOwner.findByIdAndDelete.mockReturnValue({
+      exec: jest.fn().mockResolvedValue(owner),
+    } as never);
 
     const result = await resolvers.Mutation.deleteOwner(undefined, { id: 'owner1' });
 
@@ -111,9 +127,9 @@ describe('deleteOwner', () => {
   it('throws GraphQLError when the owner does not exist', async () => {
     mockOwner.findById.mockReturnValue({ exec: jest.fn().mockResolvedValue(null) } as never);
 
-    await expect(
-      resolvers.Mutation.deleteOwner(undefined, { id: 'missing' })
-    ).rejects.toThrow(GraphQLError);
+    await expect(resolvers.Mutation.deleteOwner(undefined, { id: 'missing' })).rejects.toThrow(
+      GraphQLError,
+    );
   });
 });
 
@@ -122,7 +138,9 @@ describe('deleteOwner', () => {
 describe('deleteTask', () => {
   it('deletes the task and returns its id', async () => {
     const task = { _id: 'task1', description: 'Do something' };
-    mockTask.findByIdAndDelete.mockReturnValue({ exec: jest.fn().mockResolvedValue(task) } as never);
+    mockTask.findByIdAndDelete.mockReturnValue({
+      exec: jest.fn().mockResolvedValue(task),
+    } as never);
 
     const result = await resolvers.Mutation.deleteTask(undefined, { id: 'task1' });
 
@@ -130,11 +148,13 @@ describe('deleteTask', () => {
   });
 
   it('throws GraphQLError when the task does not exist', async () => {
-    mockTask.findByIdAndDelete.mockReturnValue({ exec: jest.fn().mockResolvedValue(null) } as never);
+    mockTask.findByIdAndDelete.mockReturnValue({
+      exec: jest.fn().mockResolvedValue(null),
+    } as never);
 
-    await expect(
-      resolvers.Mutation.deleteTask(undefined, { id: 'missing' })
-    ).rejects.toThrow(GraphQLError);
+    await expect(resolvers.Mutation.deleteTask(undefined, { id: 'missing' })).rejects.toThrow(
+      GraphQLError,
+    );
   });
 });
 
@@ -170,7 +190,7 @@ describe('createTask', () => {
           dueDate: new Date('2026-04-01'),
           description: 'Review access logs',
         },
-      })
+      }),
     ).rejects.toThrow(GraphQLError);
   });
 
@@ -186,7 +206,7 @@ describe('createTask', () => {
           dueDate: new Date('2026-04-01'),
           description: 'Review access logs',
         },
-      })
+      }),
     ).rejects.toThrow(GraphQLError);
   });
 });

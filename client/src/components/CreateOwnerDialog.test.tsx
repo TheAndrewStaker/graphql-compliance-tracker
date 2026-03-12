@@ -7,7 +7,7 @@ function renderDialog() {
   render(
     <MockedProvider mocks={[]}>
       <CreateOwnerDialog open onClose={jest.fn()} />
-    </MockedProvider>
+    </MockedProvider>,
   );
 }
 

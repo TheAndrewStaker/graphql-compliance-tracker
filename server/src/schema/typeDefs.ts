@@ -1,7 +1,4 @@
 import { readFileSync } from 'fs';
 import { join } from 'path';
 
-export const typeDefs = readFileSync(
-  join(__dirname, 'schema.graphql'),
-  'utf8'
-);
+export const typeDefs = readFileSync(join(__dirname, 'schema.graphql'), 'utf8');
